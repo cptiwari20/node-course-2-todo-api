@@ -17,24 +17,18 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => {
 	// 	console.log(JSON.stringify(result.ops, undefined, 2))
 	// })
 
-	// db.collection('Users').insertOne({
-	// 	name: 'vikas tiwari',
-	// 	age: 20, 
-	// 	location: "Jabalpur",
-	// 	completed: false,
-	// 	_id:1234
-	// }, (err, result) => {
+	db.collection('Users').insertOne({
+		name: 'vikas tiwari',
+		age: 20, 
+		location: "Jabalpur",
+		completed: false,
+		_id:1234
+	}, (err, result) => {
 
-	// 	if(err){
-	// 		console.log("unable to eInsert data", err);
-	// 	};
-	// 	console.log(JSON.stringify(result.ops, undefined, 2))
-	// })
-
-	db.collection('Users').find().toArray().then((result)=>{
-		console.log(result)
-	}, (err)=> {
-		console.log('Unable to fetch the data', err)
+		if(err){
+			console.log("unable to eInsert data", err);
+		};
+		console.log(JSON.stringify(result.ops, undefined, 2))
 	})
 
 	// db.close()
