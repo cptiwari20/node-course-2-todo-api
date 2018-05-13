@@ -6,7 +6,7 @@ const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
 beforeEach((done)=> {
-  Todo.remove({}).then(() => done());
+  Todo.deleteAll({}).then(() => done());
 });
 
 describe("POST/todos", ()=>{
@@ -28,6 +28,26 @@ describe("POST/todos", ()=>{
         Todo.find().then((todos)=>{
           expect(todos.length).toBe(1);
           expect(todos[0].text).toBe(text);
+          done()
+        }).catch((e) => done(e));
+      })
+  })
+  it("it should not create a new todo", (done)=>{
+
+    request(app)
+      .post("todos")
+      .send({})
+      .expect(400)
+      .expect((res) =>{
+        expect((req.body.text).toBe(text));
+      })
+      .end((err, res) =>{
+        if(err){
+          return done(err)
+        }
+
+        Todo.find().then((todos)=>{
+          expect(todos.length).toBe(0);
           done()
         }).catch((e) => done(e));
       })
