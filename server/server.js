@@ -35,3 +35,4 @@ app.listen(3000, () => {
 	console.log("local server 3000 has been started")
 });
 
+module.exports = {app};
