@@ -23,7 +23,7 @@ beforeEach((done) => {
 // create a todo;
 describe("POST/todos", ()=>{
   it("it should create a new todo", (done)=>{
-    var text = "test todo text";
+      var text = "test todo text";
 
     request(app)
       .post("/todos")
@@ -40,7 +40,7 @@ describe("POST/todos", ()=>{
         Todo.find({text}).then((todos)=>{
           expect(todos.length).toBe(1);
           expect(todos[0].text).toBe(text);
-          done()
+          done();
         }).catch((e) => done(e));
       });
   });
@@ -50,9 +50,6 @@ describe("POST/todos", ()=>{
       .post("/todos")
       .send({})
       .expect(400)
-      .expect((res) =>{
-        expect(res.body.text).toBe(text);
-      })
       .end((err, res) =>{
         if(err){
           return done(err)
@@ -60,7 +57,7 @@ describe("POST/todos", ()=>{
 
         Todo.find().then((todos)=>{
           expect(todos.length).toBe(2);
-          done()
+          done();
         }).catch((e) => done(e));
       });
   });
@@ -100,6 +97,41 @@ describe("GET/todos/:id", () => {
   it('should 404 for Invalid Id', (done) =>{
     request(app)
       .get(`/todos/abc123`)
+      .expect(400)
+      .end(done);
+  });
+});
+
+//delete routes
+describe("DELETE /todos/:id", () =>{
+  it("should delete a todo", (done) => {
+    var hexId = todos[1]._id.toHexString();
+    request(app)
+      .delete(`/todos/${hexId}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo._id).toBe(hexId);
+      })
+      .end((err, res) => {
+        if(err){
+          return done(err);
+        }
+        Todo.findById(hexId).then((todo) => {
+          expect(todo).toBeFalsy();
+          done();
+        }).catch((e) => done(e))
+      })
+  });
+  it("should return 404 for Object Id not found", (done)=>{
+    var hexID = new ObjectID().toHexString()
+    request(app)
+      .delete(`/todos/${hexID}`)
+      .expect(400)
+      .end(done);
+  });
+  it("should return 404 for Invalid Id", (done)=> {
+    request(app)
+      .delete(`/todos/abc123`)
       .expect(400)
       .end(done);
   });

@@ -17,7 +17,7 @@ app.post('/todos', (req, res) => {
 	newTodo.save().then((doc) => {
 		res.send(doc)
 	}, (e) => {
-		console.log("Unable to save", e)
+		res.status(400).send(e);
 	})
 });
  app.post("/users", (req, res) => {
@@ -28,13 +28,13 @@ app.post('/todos', (req, res) => {
  	newUser.save().then((doc) => {
  		res.send(doc)
  	}, (e) => {
- 		console.log("unabe to save new user", e)
+ 		res.status(400).send(e);
  	})
 });
 
 app.get("/todos", (req, res) => {
 	Todo.find().then((todos) => {
-		res.send(JSON.stringify({todos}));
+		res.send({todos});
 	}, (e) => {
 		res.status(400).send(e)
 	})
@@ -43,12 +43,10 @@ app.get("/todos", (req, res) => {
 app.get('/todos/:id', (req, res) => {
 	var id = req.params.id;
 	if(!ObjectID.isValid(id)){
-		console.log("No Id Found");
 		return res.status(400).send();
 	}
 	Todo.findById(id).then((todo) => {
 		if(!todo){
-			console.log("No Todo of this Id Found");
 			return res.status(400).send()
 		}
 		res.send({todo})
@@ -60,15 +58,12 @@ app.get('/todos/:id', (req, res) => {
 app.delete('/todos/:id', (req, res) => {
 	var id = req.params.id;
 	if(!ObjectID.isValid(id)){
-		console.log("Invalid Id");
 		return res.status(400).send()
 	}
 	Todo.findByIdAndRemove(id).then((todo) => {
 		if(!todo){
-			console.log("No Todo of this Id Found");
 			return res.status(400).send()
-		}
-		console.log("Successfully deleted a Todo", todo);
+		};
 		res.send({todo})
 	}).catch ((e)=>{
 		return res.status(400),send()
