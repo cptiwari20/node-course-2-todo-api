@@ -32,7 +32,7 @@ app.post('/todos', (req, res) => {
 });
 
 app.get("/todos", (req, res) => {
-	todo.find().then((todos) => {
+	Todo.find().then((todos) => {
 		res.send(JSON.stringify({todos}));
 	}, (e) => {
 		res.status(400).send(e)
@@ -56,7 +56,7 @@ app.get('/todos/:id', (req, res) => {
 	});
 });
 
-var port = 3030 || 3000;
+var port = 3000 || 3030;
 app.listen(port, () => {
 	console.log("local server has been started! its port:", port)
 });
