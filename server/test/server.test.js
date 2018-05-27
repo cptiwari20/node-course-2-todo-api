@@ -11,7 +11,9 @@ const todos = [
   },
   {
     _id : new ObjectID(),
-    text: "Second Note todo."
+    text: "Second Note todo.",
+    completed: true,
+    completedAt: 333
   }
 ];
 
@@ -136,3 +138,40 @@ describe("DELETE /todos/:id", () =>{
       .end(done);
   });
 });
+//test for update routes
+describe('PATCH /todos/:id', () =>{
+  it('should update todo', (done)=>{
+    var hexID = todos[0]._id.toHexString();
+    var text = "This is an Update Text.";
+    request(app)
+      .patch(`/todos/${hexID}`)
+      .send({
+        text: text,
+        completed: true
+        })
+      .expect(200)
+      .expect((res)=>{
+        expect(res.body.todo.text).toBe(text)
+        expect(res.body.todo.completed).toBe(true);
+         expect(res.body.todo.completedAt).toBeType('number');
+      })
+      .end(done);
+  });
+  it('should clear completedAt when todo is not updated', (done)=>{
+    var hexID = todos[0]._id.toHexString();
+    var text = "This is an Update Text!!!!";
+    request(app)
+      .patch(`/todos/${hexID}`)
+      .send({
+        text: text,
+        completed: false
+        })
+      .expect(200)
+      .expect((res)=>{
+        expect(res.body.todo.text).toBe(text)
+        expect(res.body.todo.completed).toBe(false);
+         expect(res.body.todo.completedAt).toBeFalsy();
+      })
+      .end(done);
+  })
+})
