@@ -1,0 +1,27 @@
+const {ObjectID} = require('mongodb');
+
+const Todo = require('./../../models/todo');
+const User = require('./../../models/user');
+
+
+
+const todos = [
+    {
+      _id : new ObjectID(),
+      text: "First Note todo."
+    },
+    {
+      _id : new ObjectID(),
+      text: "Second Note todo.",
+      completed: true,
+      completedAt: 333
+    }
+  ];
+  
+  const populateTodos = (done) => {
+    Todo.remove({}).then(() =>{
+      return Todo.insertMany(todos)
+    }).then(() => done());
+  };
+
+module.exports= {todos, populateTodos};
