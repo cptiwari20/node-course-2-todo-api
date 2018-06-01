@@ -1,19 +1,18 @@
 require('./config/config');
-
-var express		     = require('express');
+var express		   = require('express');
 const _            = require('lodash');
 const bodyParser   = require('body-parser');
 const {ObjectID}   = require('mongodb');
 
-var {mongoose}   = require('./db/mongoose');
-var {Todo}	     = require('./models/todo');
-var {User}	     = require('./models/user');
+var {mongoose}     = require('./db/mongoose');
+var {Todo}	       = require('./models/todo');
+var {User}	       = require('./models/user');
 var app    		   = express();
-var port 				 = process.env.PORT || 3000;
+var port 		   = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-//Create
+//Create Todos
 app.post('/todos', (req, res) => {
 	var newTodo = new Todo({
 		text: req.body.text
@@ -24,18 +23,6 @@ app.post('/todos', (req, res) => {
 		res.status(400).send(e);
 	})
 });
- app.post("/users", (req, res) => {
- 	var newUser = new User ({
- 		name: req.body.name,
- 		email: req.body.email
- 	});
- 	newUser.save().then((doc) => {
- 		res.send(doc)
- 	}, (e) => {
- 		res.status(400).send(e);
- 	})
-});
-
 //Read /get all
 app.get("/todos", (req, res) => {
 	Todo.find().then((todos) => {
@@ -96,7 +83,18 @@ app.patch("/todos/:id", (req, res) => {
 		return res.send(400).send();
 	});
 });
-
+// User
+app.post("/users", (req, res) => {
+	var body = _.pick(req.body, ['email', 'password'])
+	var user = new User(body);
+	user.save().then(() => {
+		return user.generateAuthToken();
+	}).then((token) =>{
+		res.header('x-auth', token).send(user)
+	}).catch((e) => {
+		res.status(400).send(e);
+	})
+});
 
 app.listen(port, () => {
 	console.log("local server has been started! its port:", port)
