@@ -107,10 +107,9 @@ app.post('/user/login', (req, res) =>{
 	var body = _.pick(req.body, ['email', 'password']);
 
 	User.findByCredentials(body.email, body.password).then((user) =>{
-		// return user.generateAuthToken().then((token)=>{
-		// 	res.header('x-auth', token).send(user);		
-		// })
-		res.send(user)
+		return user.generateAuthToken().then((token)=>{
+			res.header('x-auth', token).send(user);		
+		})
 	}).catch((e) =>{
 		res.status(400).send(e);
 	})
@@ -118,5 +117,14 @@ app.post('/user/login', (req, res) =>{
 app.listen(port, () => {
 	console.log("local server has been started! its port:", port)
 });
+//logout by deleting the token
+app.delete('/user/me/token', authenticate, (req, res) => {
+	var user = req.user;
+	user.removeToken(req.token).then(()=> {
+		res.status(200).send();
+	}).catch((e) =>{
+		res.status(400).send();
+	})
+})
 
 module.exports = {app};
