@@ -173,7 +173,7 @@ describe('PATCH /todos/:id', () =>{
       .expect((res)=>{
         expect(res.body.todo.text).toBe(text)
         expect(res.body.todo.completed).toBe(true);
-         expect(res.body.todo.completedAt).toBeA('number');
+         expect(typeof res.body.todo.completedAt).toBe('number');
       })
       .end(done);
   });
@@ -253,7 +253,7 @@ describe('POST /users', ()=>{
         }
         User.findOne({email}).then((user)=>{
           expect(user).toBeTruthy();
-          expect(user.password).toNotEqual(password);
+          expect(user.password).not.toBe(password);
           done();
         }).catch((e) =>{
           done(e)
@@ -301,7 +301,7 @@ describe('POST /user/login', () =>{
         done(err)
       }
       User.findById(users[1]._id).then((user) => {
-        expect(user.tokens[0]).toInclude({
+        expect(user.toObject().tokens[1]).toMatchObject({
           access: "auth",
           token: res.header['x-auth']
         });
